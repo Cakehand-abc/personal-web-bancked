@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    # 替换为你刚才提供的账号和密码
+    url: jdbc:mysql://127.0.0.1:3306/personal_blog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: Hujihan608624
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23lilPUtZHCtxXa50m
+            client-secret: 8abf2db29283b0e1a890ae5d86b0c5b78128ea51
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+  servlet:
+    multipart:
+      max-file-size: 100MB # 单个文件最大限制（比如传视频）
+      max-request-size: 100MB # 单次请求最大总限制
+
+# 自定义博客配置
+blog:
+  upload:
+    path: ./uploads/ # 本地存储文件的目录（会生成在项目根目录下）
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 在控制台打印 SQL 语句，方便调试
+    map-underscore-to-camel-case: true # 开启驼峰命名自动映射
+  global-config:
+    db-config:
+      id-type: auto # 默认主键生成策略为自增
+

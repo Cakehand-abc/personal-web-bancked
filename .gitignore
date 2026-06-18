@@ -1,0 +1,27 @@
+target/
+uploads/
+*.class
+
+# Log files
+*.log
+
+# Maven release backups
+release.properties
+pom.xml.releaseBackup
+pom.xml.tagNameVersionBackup
+pom.xml.nextDevelopmentVersion
+pom.xml.backup
+pom.xml.versionsBackup
+
+# IDEs and editors
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+.metadata/
+.vscode/
+
+# OS files
+Thumbs.db
+.DS_Store
