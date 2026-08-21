@@ -31,6 +31,13 @@ public class SiteSettingServiceImpl extends ServiceImpl<SiteSettingMapper, SiteS
         } catch (Exception e) {
             System.out.println("检查 default_cover_url 列已存在或添加失败 (预期内)");
         }
+
+        try {
+            jdbcTemplate.execute("ALTER TABLE site_setting ADD COLUMN avatar_url VARCHAR(255) DEFAULT ''");
+            System.out.println("成功添加 avatar_url 列");
+        } catch (Exception e) {
+            System.out.println("检查 avatar_url 列已存在或添加失败 (预期内)");
+        }
     }
 
     @Override

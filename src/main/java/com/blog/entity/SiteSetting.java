@@ -20,6 +20,8 @@ public class SiteSetting {
 
     private String siteSignature; // 站长签名
 
+    private String avatarUrl; // 站长头像直链
+
     private String recordNumber; // 备案号
 
     private Boolean useOldIntro; // 是否使用旧版文字动画
