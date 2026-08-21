@@ -54,6 +54,12 @@ public class MessageController {
         return Result.success("留言成功");
     }
 
+    @DeleteMapping("/messages/{id}")
+    public Result<String> deleteFrontMessage(@PathVariable Long id) {
+        messageService.removeById(id);
+        return Result.success("删除成功");
+    }
+
     // ================= 后台管理接口 =================
 
     @GetMapping("/admin/messages/page")

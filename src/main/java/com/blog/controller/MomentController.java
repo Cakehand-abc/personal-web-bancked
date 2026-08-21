@@ -14,6 +14,16 @@ public class MomentController {
     private MomentService momentService;
 
     /**
+     * [前台/管理端] 获取所有随笔动态列表
+     */
+    @GetMapping("/list")
+    public Result<java.util.List<com.blog.entity.Moment>> getMomentList() {
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<com.blog.entity.Moment> wrapper = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        wrapper.orderByDesc(com.blog.entity.Moment::getCreateTime);
+        return Result.success(momentService.list(wrapper));
+    }
+
+    /**
      * [管理端] 发布动态（支持无限混排多媒体）
      */
     @PostMapping("/admin/save")
