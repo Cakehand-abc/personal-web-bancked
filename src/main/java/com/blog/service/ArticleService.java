@@ -14,6 +14,11 @@ public interface ArticleService extends IService<Article> {
     Page<ArticleVO> getArticlePage(Integer current, Integer size);
 
     /**
+     * 根据 ID 获取文章详情 (用于编辑)
+     */
+    ArticleVO getArticleById(Long id);
+
+    /**
      * 后台发布新文章
      */
     void saveArticle(ArticleDTO dto);

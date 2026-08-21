@@ -11,7 +11,9 @@ public class ArticleVO {
     private Long id;
     private String title;
     private String summary;
+    private String content;
     private String coverUrl;
+    private Long categoryId;
     private Boolean isFeatured;
     private LocalDateTime createTime;
 

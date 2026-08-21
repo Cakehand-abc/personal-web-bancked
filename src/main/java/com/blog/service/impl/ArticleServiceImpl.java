@@ -50,6 +50,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         for (Article article : articlePage.getRecords()) {
             ArticleVO vo = new ArticleVO();
             BeanUtils.copyProperties(article, vo);
+            vo.setContent(null); // 列表不需要返回文章正文
 
             // 查分类名
             if (article.getCategoryId() != null) {
@@ -79,6 +80,31 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Page<ArticleVO> voPage = new Page<>(current, size, articlePage.getTotal());
         voPage.setRecords(voList);
         return voPage;
+    }
+
+    @Override
+    public ArticleVO getArticleById(Long id) {
+        Article article = this.getById(id);
+        if (article == null) return null;
+
+        ArticleVO vo = new ArticleVO();
+        BeanUtils.copyProperties(article, vo);
+
+        if (article.getCategoryId() != null) {
+            Category category = categoryMapper.selectById(article.getCategoryId());
+            if (category != null) vo.setCategoryName(category.getName());
+        }
+
+        LambdaQueryWrapper<ArticleTag> atWrapper = new LambdaQueryWrapper<>();
+        atWrapper.eq(ArticleTag::getArticleId, id);
+        List<ArticleTag> articleTags = articleTagMapper.selectList(atWrapper);
+        if (!articleTags.isEmpty()) {
+            List<Long> tagIds = articleTags.stream().map(ArticleTag::getTagId).collect(Collectors.toList());
+            vo.setTags(tagMapper.selectBatchIds(tagIds));
+        } else {
+            vo.setTags(new ArrayList<>());
+        }
+        return vo;
     }
 
     @Override

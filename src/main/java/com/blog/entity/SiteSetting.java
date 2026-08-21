@@ -21,4 +21,8 @@ public class SiteSetting {
     private String siteSignature; // 站长签名
 
     private String recordNumber; // 备案号
+
+    private Boolean useOldIntro; // 是否使用旧版文字动画
+
+    private String defaultCoverUrl; // 全局默认封面图
 }

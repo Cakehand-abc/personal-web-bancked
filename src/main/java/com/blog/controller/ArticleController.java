@@ -22,9 +22,26 @@ public class ArticleController {
     public Result<Page<ArticleVO>> getArticleList(
             @RequestParam(defaultValue = "1") Integer current,
             @RequestParam(defaultValue = "10") Integer size) {
-        
         Page<ArticleVO> pageData = articleService.getArticlePage(current, size);
         return Result.success(pageData);
+    }
+
+    /**
+     * [前台] 获取文章详情
+     */
+    @GetMapping("/{id}")
+    public Result<ArticleVO> getArticleDetail(@PathVariable Long id) {
+        ArticleVO vo = articleService.getArticleById(id);
+        return Result.success(vo);
+    }
+
+    /**
+     * [管理端] 获取单篇文章详情 (用于编辑回填)
+     */
+    @GetMapping("/admin/{id}")
+    public Result<ArticleVO> getArticleById(@PathVariable Long id) {
+        ArticleVO vo = articleService.getArticleById(id);
+        return Result.success(vo);
     }
 
     /**

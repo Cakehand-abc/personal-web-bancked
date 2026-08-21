@@ -63,6 +63,10 @@ public class SecurityConfig {
             // 5. 配置 OAuth2 登录
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuth2AuthenticationSuccessHandler) // 登录成功后走我们写的处理器签发 JWT
+                .failureHandler((request, response, exception) -> {
+                    // 登录失败（如用户取消授权），重定向回前端登录页并带上错误参数
+                    response.sendRedirect("http://localhost:5173/login?error=true");
+                })
             )
             // 6. 把我们写的 JWT 过滤器加在 UsernamePassword 过滤器之前
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
