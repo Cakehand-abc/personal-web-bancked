@@ -56,6 +56,11 @@ public class MessageController {
 
     @DeleteMapping("/messages/{id}")
     public Result<String> deleteFrontMessage(@PathVariable Long id) {
+        org.springframework.security.core.Authentication auth =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return Result.error(401, "无权删除留言，请登录管理员账号");
+        }
         messageService.removeById(id);
         return Result.success("删除成功");
     }

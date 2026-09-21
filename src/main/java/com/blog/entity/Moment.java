@@ -16,6 +16,12 @@ public class Moment {
 
     private String content;
 
+    private String tag;
+
+    private Integer likes;
+
     private LocalDateTime createTime;
 
+    @com.baomidou.mybatisplus.annotation.TableField(exist = false)
+    private java.util.List<MomentMedia> mediaList;
 }

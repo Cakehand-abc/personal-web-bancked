@@ -25,6 +25,9 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Autowired
+    private com.blog.service.TokenRedisService tokenRedisService;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         try {
@@ -55,11 +58,15 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                 sysUserService.save(user);
             }
 
-            // 3. 签发 JWT
-            String token = jwtUtils.generateToken(user.getUsername());
+            // 3. 签发双 Token (Access Token 30分钟 + Refresh Token 7天)
+            String accessToken = jwtUtils.generateAccessToken(user.getUsername());
+            String refreshToken = jwtUtils.generateRefreshToken(user.getUsername());
 
-            // 4. 重定向回前端 Vue 项目，并把 Token 带在 URL 后面
-            response.sendRedirect("http://localhost:5173/oauth2/redirect?token=" + token);
+            // 4. 将 Refresh Token 存入 Redis
+            tokenRedisService.storeRefreshToken(user.getUsername(), refreshToken, com.blog.utils.JwtUtils.REFRESH_TOKEN_EXPIRE_TIME);
+
+            // 5. 重定向回前端 Vue 项目，并把 Token 带在 URL 后面
+            response.sendRedirect("http://localhost:5173/oauth2/redirect?token=" + accessToken + "&refreshToken=" + refreshToken + "&username=" + user.getUsername());
         } catch (Exception e) {
             e.printStackTrace();
             response.setContentType("text/html;charset=utf-8");

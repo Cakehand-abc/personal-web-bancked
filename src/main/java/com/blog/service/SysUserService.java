@@ -12,6 +12,11 @@ public interface SysUserService extends IService<SysUser> {
     String login(LoginDTO dto);
 
     /**
+     * 账号密码登录 (支持双 Token + Redis 存储)
+     */
+    com.blog.vo.TokenVO loginWithTokens(LoginDTO dto);
+
+    /**
      * 初始化第一个超级管理员账号 (仅当数据库为空时可用)
      */
     void initMasterAccount();

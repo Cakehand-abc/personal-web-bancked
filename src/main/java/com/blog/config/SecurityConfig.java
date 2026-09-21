@@ -41,25 +41,30 @@ public class SecurityConfig {
                 response.setContentType("application/json;charset=utf-8");
                 response.getWriter().write("{\"code\":401,\"msg\":\"登录已过期，请重新登录\"}");
             }))
-            // 4. 路由拦截规则
-            .authorizeHttpRequests(auth -> auth
-                // 放行所有的 OPTIONS 请求（解决跨域 PUT/POST 请求的预检报错）
-                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                // 所有以 /api/auth/ 开头的接口（比如登录）全部放行
-                .requestMatchers("/api/auth/**").permitAll()
-                // 列出所有管理端接口（Spring Boot 3 默认不支持在路径中间使用 **，所以我们要枚举出来）
-                .requestMatchers(
-                    "/api/articles/admin/**",
-                    "/api/moments/admin/**",
-                    "/api/projects/admin/**",
-                    "/api/categories/admin/**",
-                    "/api/tags/admin/**",
-                    "/api/users/admin/**",
-                    "/api/settings/admin/**"
-                ).authenticated()
-                // 其他前台接口随便访问
-                .anyRequest().permitAll()
-            )
+                // 4. 路由拦截规则
+                .authorizeHttpRequests(auth -> auth
+                    // 放行所有的 OPTIONS 请求（解决跨域 PUT/POST 请求的预检报错）
+                    .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                    // 所有以 /api/auth/ 开头的接口（比如登录、刷新Token、退出等）全部放行
+                    .requestMatchers("/api/auth/**").permitAll()
+                    // 全面封堵所有管理端接口（包括 /api/admin/** 下的所有接口如 /api/admin/upload 与 /api/admin/messages/**）
+                    .requestMatchers(
+                        "/api/admin/**",
+                        "/api/articles/admin/**",
+                        "/api/moments/admin/**",
+                        "/api/projects/admin/**",
+                        "/api/categories/admin/**",
+                        "/api/tags/admin/**",
+                        "/api/users/admin/**",
+                        "/api/gallery/admin/**",
+                        "/api/settings/admin",
+                        "/api/settings/admin/**"
+                    ).authenticated()
+                    // 前台留言删除接口安全加固：必须通过认证方可删除
+                    .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/messages/**").authenticated()
+                    // 其他前台接口放行
+                    .anyRequest().permitAll()
+                )
             // 5. 配置 OAuth2 登录
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuth2AuthenticationSuccessHandler) // 登录成功后走我们写的处理器签发 JWT

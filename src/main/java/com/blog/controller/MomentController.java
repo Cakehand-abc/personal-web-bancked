@@ -18,9 +18,15 @@ public class MomentController {
      */
     @GetMapping("/list")
     public Result<java.util.List<com.blog.entity.Moment>> getMomentList() {
-        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<com.blog.entity.Moment> wrapper = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
-        wrapper.orderByDesc(com.blog.entity.Moment::getCreateTime);
-        return Result.success(momentService.list(wrapper));
+        return Result.success(momentService.listWithMedia());
+    }
+
+    /**
+     * [前台] 点赞随笔动态
+     */
+    @PostMapping("/{id}/like")
+    public Result<Integer> likeMoment(@PathVariable Long id) {
+        return Result.success(momentService.likeMoment(id));
     }
 
     /**

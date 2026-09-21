@@ -20,8 +20,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Autowired
+    private com.blog.service.TokenRedisService tokenRedisService;
+
     @Override
-    public String login(LoginDTO dto) {
+    public com.blog.vo.TokenVO loginWithTokens(LoginDTO dto) {
         // 1. 根据用户名查询数据库
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysUser::getUsername, dto.getUsername());
@@ -32,8 +35,26 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             throw new RuntimeException("账号或密码错误");
         }
 
-        // 3. 登录成功，签发 JWT 令牌
-        return jwtUtils.generateToken(user.getUsername());
+        // 3. 登录成功，签发双 Token (Access Token 30分钟 + Refresh Token 7天)
+        String accessToken = jwtUtils.generateAccessToken(user.getUsername());
+        String refreshToken = jwtUtils.generateRefreshToken(user.getUsername());
+
+        // 4. 将 Refresh Token 存入 Redis (7天有效)
+        tokenRedisService.storeRefreshToken(user.getUsername(), refreshToken, JwtUtils.REFRESH_TOKEN_EXPIRE_TIME);
+
+        return com.blog.vo.TokenVO.builder()
+                .token(accessToken)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .expiresIn(JwtUtils.ACCESS_TOKEN_EXPIRE_TIME / 1000)
+                .username(user.getUsername())
+                .build();
+    }
+
+    @Override
+    public String login(LoginDTO dto) {
+        return loginWithTokens(dto).getAccessToken();
     }
 
     @Override
